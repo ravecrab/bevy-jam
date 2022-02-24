@@ -39,6 +39,10 @@ jobs:
         run: sudo apt-get update; sudo apt-get install --no-install-recommends libasound2-dev libudev-dev
         if: runner.os == 'linux'
 
+      - name: Remove local cargo config
+        run: rm -rf .cargo/
+        if: matrix.toolchain == 'stable'
+
       - name: Check
         uses: actions-rs/cargo@v1
         with:
@@ -69,6 +73,10 @@ jobs:
           target: wasm32-unknown-unknown
           override: true
 
+      - name: Remove local cargo config
+        run: rm -rf .cargo/
+        if: matrix.toolchain == 'stable'
+
       - name: Check wasm
         uses: actions-rs/cargo@v1
         with:
@@ -98,6 +106,9 @@ jobs:
 
       - name: Install alsa and udev
         run: sudo apt-get update; sudo apt-get install --no-install-recommends libasound2-dev libudev-dev
+
+      - name: Remove local cargo config
+        run: rm -rf .cargo/
 
       - name: Run clippy
         run: cargo clippy --all-targets --all-features
