@@ -1,4 +1,4 @@
-import bevy::prelude::*;
+use bevy::prelude::*;
 
 #[derive(Component)]
 struct Name(String);
