@@ -6,3 +6,6 @@ pub mod bootstrap;
 
 /// User interface systems and components
 pub mod ui;
+
+/// Game states representing a certain screen
+pub mod state;
