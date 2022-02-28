@@ -1,5 +1,7 @@
+use {team::*};
 use bevy::prelude::{Plugin as PluginTrait, *};
 
+pub mod team;
 pub struct Plugin;
 
 impl PluginTrait for Plugin {
