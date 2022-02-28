@@ -11,3 +11,6 @@ pub mod ui;
 pub mod state;
 
 pub mod cards;
+
+/// Battle state/screen bundle
+pub mod battle;
