@@ -1,0 +1,7 @@
+(
+    name: "Knight of Liswhistle",
+    desc: "Infantry from the Liswhistle Kingdom. \"T-tuna sandwich~\"",
+    actions: [
+        Attack(200)
+    ]
+)

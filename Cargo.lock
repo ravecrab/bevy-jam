@@ -199,6 +199,8 @@ name = "bevy-jam"
 version = "0.1.0"
 dependencies = [
  "bevy",
+ "bevy_asset_ron",
+ "serde",
 ]
 
 [[package]]
@@ -241,6 +243,18 @@ dependencies = [
  "wasm-bindgen",
  "wasm-bindgen-futures",
  "web-sys",
+]
+
+[[package]]
+name = "bevy_asset_ron"
+version = "0.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "0d1cac0c9e9448b0c750daade0b1755072e031671dd08ad1bdded6f6f3a7d4d2"
+dependencies = [
+ "anyhow",
+ "bevy",
+ "ron",
+ "serde",
 ]
 
 [[package]]
