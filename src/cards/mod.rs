@@ -1,6 +1,8 @@
 use bevy::prelude::*;
-use bevy_asset_ron::RonAssetPlugin;
 use bevy::reflect::TypeUuid;
+use bevy_asset_ron::RonAssetPlugin;
+
+#[allow(unused_imports)]
 use serde::Deserialize;
 
 #[derive(Component)]
@@ -28,33 +30,32 @@ struct Card;
 struct InPlay;
 
 /// Only exists to load cards from text files and instantiate them. Not actually part of the ECS.
-#[derive(serde::Deserialize)]
-#[derive(TypeUuid)]
+#[allow(dead_code)]
+#[derive(serde::Deserialize, TypeUuid)]
 #[uuid = "41035a43-8099-4c30-a85e-72c45dbba279"]
 pub struct CardRep {
     name: String,
     desc: String,
-    actions: Vec<Action>
+    actions: Vec<Action>,
 }
 
 #[derive(serde::Deserialize)]
 pub enum Action {
     Attack(u8),
-    Burn(u8)
+    Burn(u8),
 }
 
-struct CardList{
-    cards: Vec<Handle<CardRep>>
+#[allow(dead_code)]
+struct CardList {
+    cards: Vec<Handle<CardRep>>,
 }
 
 pub struct CardPlugin;
 
 impl Plugin for CardPlugin {
     fn build(&self, app: &mut App) {
-        app.add_plugin(
-            RonAssetPlugin::<CardRep>::new(&["card"])
-        )
-        .add_startup_system(load_cards.system());
+        app.add_plugin(RonAssetPlugin::<CardRep>::new(&["card"]))
+            .add_startup_system(load_cards.system());
     }
 }
 
