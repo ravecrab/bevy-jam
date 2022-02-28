@@ -10,6 +10,7 @@ pub mod ui;
 /// Game states representing a certain screen
 pub mod state;
 
+// Components and loading for cards
 pub mod cards;
 
 /// Battle state/screen bundle
