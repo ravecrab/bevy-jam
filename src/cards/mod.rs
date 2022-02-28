@@ -31,17 +31,13 @@ pub struct CardRep {
     name: String,
     desc: String,
     actions: Vec<Action>,
+    sprites: String // Path to sprite sheet under `<project_root>/assets/`
 }
 
 #[derive(serde::Deserialize)]
 pub enum Action {
     Attack(u8),
     Burn(u8),
-}
-
-#[allow(dead_code)]
-struct CardList {
-    cards: Vec<Handle<CardRep>>,
 }
 
 pub struct CardPlugin;
