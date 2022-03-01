@@ -13,14 +13,8 @@ impl Team {
     #[inline]
     #[must_use]
     pub fn empty(count: u8) -> Self {
-        let team: Vec<Card> = (0..count)
-            .into_iter()
-            .map(|_|  Card::default())
-            .collect();
-        Self {
-            count,
-            team,
-        }
+        let team: Vec<Card> = (0..count).into_iter().map(|_| Card::default()).collect();
+        Self { count, team }
     }
 
     /// Randomize couplets till max count and set them in the Team
@@ -32,9 +26,7 @@ impl Team {
 
     #[cfg(feature = "debug")]
     pub fn console_output(&self) -> String {
-        let mut buffer = format!(
-            "Team of {} cards:\n", self.count
-        );
+        let mut buffer = format!("Team of {} cards:\n", self.count);
         for card in self.team.iter() {
             buffer = format!("{}{}\n", buffer, card.console_output());
         }
@@ -54,5 +46,3 @@ impl DerefMut for Team {
         &mut self.team
     }
 }
-
-

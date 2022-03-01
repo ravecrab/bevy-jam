@@ -1,9 +1,9 @@
-use crate::cards::stats::*;
 use crate::cards::attack::*;
+use crate::cards::stats::*;
 
 ///Card as a struct to hold stats and attack
 #[derive(Debug, Copy, Clone, Eq, PartialEq)]
-pub struct Card{
+pub struct Card {
     stats: Stats,
     attack: Attack,
 }
@@ -31,7 +31,7 @@ impl Card {
     //#[cfg(feature = "debug")]
     pub fn console_output(&self) -> String {
         let mut buffer = format!("Card: {}\n", self.attack.console_output());
-        buffer = format!("{}{}",buffer,self.stats.console_output());
+        buffer = format!("{}{}", buffer, self.stats.console_output());
         buffer
     }
 }

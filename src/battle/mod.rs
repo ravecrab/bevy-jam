@@ -1,5 +1,5 @@
-use {team::*};
 use bevy::prelude::{Plugin as PluginTrait, *};
+use team::*;
 
 pub mod team;
 pub struct Plugin;
@@ -104,11 +104,9 @@ fn ui(mut commands: Commands, asset_server: Res<AssetServer>) {
                                     color: Color::rgba_u8(0, 0, 0, 0).into(),
                                     ..Default::default()
                                 })
-                                .with_children(|parent| spawn_team(
-                                        parent,
-                                        card_front,
-                                        font.clone(),
-                                        ));
+                                .with_children(|parent| {
+                                    spawn_team(parent, card_front, font.clone())
+                                });
 
                             parent
                                 .spawn_bundle(NodeBundle {
@@ -239,11 +237,7 @@ fn ui(mut commands: Commands, asset_server: Res<AssetServer>) {
         });
 }
 
-pub fn spawn_team(
-    parent: &mut ChildBuilder,
-    image: Handle<Image>,
-    font: Handle<Font>,
-){
+pub fn spawn_team(parent: &mut ChildBuilder, image: Handle<Image>, font: Handle<Font>) {
     let mut team = Team::empty(4); // should move to arguments
     team.random();
     for card in team.team {
@@ -258,23 +252,22 @@ pub fn spawn_team(
                 image: image.clone().into(),
                 ..Default::default()
             })
-        .with_children(|parent| {
-            parent.spawn_bundle(TextBundle {
-                text: Text::with_section(
-                          card.console_output(),
-                          TextStyle {
-                              font_size: 12.0,
-                              color: Color::BLACK,
-                              font: font.clone(),
-                          },
-                          TextAlignment {
-                              vertical: VerticalAlign::Center,
-                              horizontal: HorizontalAlign::Center,
-                          },
-                          ),
-                          ..Default::default()
+            .with_children(|parent| {
+                parent.spawn_bundle(TextBundle {
+                    text: Text::with_section(
+                        card.console_output(),
+                        TextStyle {
+                            font_size: 12.0,
+                            color: Color::BLACK,
+                            font: font.clone(),
+                        },
+                        TextAlignment {
+                            vertical: VerticalAlign::Center,
+                            horizontal: HorizontalAlign::Center,
+                        },
+                    ),
+                    ..Default::default()
+                });
             });
-        })
-        ;
     }
 }

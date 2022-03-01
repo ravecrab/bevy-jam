@@ -1,12 +1,12 @@
-pub use {attack::*,stats::*, actions::*,card::*};
 use bevy::prelude::*;
 use bevy::reflect::TypeUuid;
 use bevy_asset_ron::RonAssetPlugin;
+pub use {actions::*, attack::*, card::*, stats::*};
 
-mod stats;
 mod actions;
 mod attack;
 mod card;
+mod stats;
 
 #[allow(unused_imports)]
 use serde::Deserialize;

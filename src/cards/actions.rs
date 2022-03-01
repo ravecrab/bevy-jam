@@ -12,6 +12,6 @@ pub enum Action {
 impl Action {
     #[cfg(feature = "debug")]
     pub fn console_output(&self) -> String {
-        format!("{:?}",self)
+        format!("{:?}", self)
     }
 }

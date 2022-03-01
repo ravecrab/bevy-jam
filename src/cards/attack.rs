@@ -1,5 +1,5 @@
-use rand::Rng;
 use bevy::prelude::*;
+use rand::Rng;
 
 ///Stats as a struct to hold
 ///Health, Armor, Speed, Mana
@@ -20,6 +20,6 @@ impl Attack {
     }
     //#[cfg(feature = "debug")]
     pub fn console_output(&self) -> String {
-        format!("{:?}",self)
+        format!("{:?}", self)
     }
 }

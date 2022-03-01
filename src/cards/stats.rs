@@ -3,7 +3,7 @@ use rand::{thread_rng, Rng};
 ///Stats as a struct to hold
 ///Health, Armor, Speed, Mana
 #[derive(Debug, Copy, Clone, Eq, PartialEq)]
-pub struct Stats{
+pub struct Stats {
     health: u32,
     armor: u32,
     speed: u32,
@@ -43,6 +43,6 @@ impl Stats {
         format!(
             "Stats:\nHealth: {}\nArmor: {}\nSpeed: {}\nMana: {}\nAttack: {}",
             self.health, self.armor, self.speed, self.mana, self.attack
-            )
+        )
     }
 }
