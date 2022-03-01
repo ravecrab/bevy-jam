@@ -1,6 +1,12 @@
 use bevy::prelude::*;
 use bevy::reflect::TypeUuid;
 use bevy_asset_ron::RonAssetPlugin;
+pub use {actions::*, attack::*, card::*, stats::*};
+
+mod actions;
+mod attack;
+mod card;
+mod stats;
 
 #[allow(unused_imports)]
 use serde::Deserialize;
@@ -9,22 +15,10 @@ use serde::Deserialize;
 struct Name(String);
 
 #[derive(Component)]
-struct Speed(u32);
-
-#[derive(Component)]
-struct Attack(u32);
-
-#[derive(Component)]
-struct Hitpoints(u32);
-
-#[derive(Component)]
 struct Deck;
 
 #[derive(Component)]
 struct Hand;
-
-#[derive(Component)]
-struct Card;
 
 #[derive(Component)]
 struct InPlay;
@@ -55,7 +49,7 @@ pub struct CardPlugin;
 impl Plugin for CardPlugin {
     fn build(&self, app: &mut App) {
         app.add_plugin(RonAssetPlugin::<CardRep>::new(&["card"]))
-            .add_startup_system(load_cards.system());
+            .add_startup_system(load_cards);
     }
 }
 
