@@ -1,4 +1,5 @@
 ```mermaid
+%%{init: { 'logLevel': 'debug', 'theme': 'dark' } }%%
 classDiagram
 direction LR
 class Chaos{
