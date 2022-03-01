@@ -12,16 +12,31 @@ mod stats;
 use serde::Deserialize;
 
 #[derive(Component)]
-struct Name(String);
+pub struct Name(pub String);
 
 #[derive(Component)]
-struct Deck;
+pub struct Speed(pub u32);
 
 #[derive(Component)]
-struct Hand;
+pub struct Attack(pub u32);
 
 #[derive(Component)]
-struct InPlay;
+pub struct Hitpoints(pub u32);
+
+#[derive(Component)]
+pub struct Hand;
+
+#[derive(Component)]
+pub struct Card;
+
+#[derive(Component)]
+pub struct InPlay;
+
+#[derive(Component)]
+pub struct Players;
+
+#[derive(Component)]
+pub struct Oppos;
 
 /// Only exists to load cards from text files and instantiate them. Not actually part of the ECS.
 #[allow(dead_code)]
@@ -31,7 +46,7 @@ pub struct CardRep {
     name: String,
     desc: String,
     actions: Vec<Action>,
-    sprites: String // Path to sprite sheet under `<project_root>/assets/`
+    sprites: String, // Path to sprite sheet under `<project_root>/assets/`
 }
 
 #[derive(serde::Deserialize)]
@@ -54,4 +69,19 @@ fn load_cards(server: Res<AssetServer>, mut commands: Commands) {
     info!("Loaded {} cards.", card_handles.len());
 
     commands.insert_resource(card_handles);
+}
+
+pub struct Deck {
+    cards: Vec<CardRep>,
+}
+
+impl Deck {
+    pub fn new() -> Self {
+        Deck { cards: Vec::new() }
+    }
+
+    pub fn shuffle(&mut self) {
+        let mut rng = rand::thread_rng();
+        self.cards.shuffle(&mut rng);
+    }
 }
