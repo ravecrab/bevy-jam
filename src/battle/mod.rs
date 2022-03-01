@@ -1,12 +1,18 @@
 use bevy::prelude::{Plugin as PluginTrait, *};
 use team::*;
 
+pub mod battle_tick;
 pub mod team;
+
+pub struct BattleTimer(Timer);
+
 pub struct Plugin;
 
 impl PluginTrait for Plugin {
     fn build(&self, app: &mut App) {
-        app.add_startup_system(ui);
+        app.insert_resource(BattleTimer(Timer::from_seconds(1.0, true)))
+            .add_startup_system(ui)
+            .add_system_set(SystemSet::on_enter(state::Battle).with_system(battle_tick));
     }
 }
 

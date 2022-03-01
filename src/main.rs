@@ -13,5 +13,6 @@ fn main() {
         .add_plugin(ui::Plugin)
         .add_plugin(cards::CardPlugin)
         .add_plugin(battle::Plugin)
+        .add_state(state::Battle)
         .run();
 }
