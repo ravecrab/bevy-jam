@@ -1,3 +1,4 @@
+use rand::Rng;
 use bevy::prelude::*;
 
 ///Stats as a struct to hold
@@ -10,7 +11,14 @@ pub enum Attack {
 }
 
 impl Attack {
-    #[cfg(feature = "debug")]
+    pub fn random() -> Self {
+        match rand::thread_rng().gen_range(0..=2) {
+            1 => Attack::Melee,
+            2 => Attack::Ranged,
+            _ => Attack::Magic,
+        }
+    }
+    //#[cfg(feature = "debug")]
     pub fn console_output(&self) -> String {
         format!("{:?}",self)
     }

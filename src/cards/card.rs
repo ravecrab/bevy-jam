@@ -12,7 +12,7 @@ impl Default for Card {
     fn default() -> Self {
         Self {
             stats: Stats::default(),
-            attack: Attack::Melee,
+            attack: Attack::random(),
         }
     }
 }
@@ -28,8 +28,10 @@ impl Card {
         self.stats.random();
     }
 
-    #[cfg(feature = "debug")]
+    //#[cfg(feature = "debug")]
     pub fn console_output(&self) -> String {
-        format!("{:?}",self)
+        let mut buffer = format!("Card: {}\n", self.attack.console_output());
+        buffer = format!("{}{}",buffer,self.stats.console_output());
+        buffer
     }
 }

@@ -4,8 +4,8 @@ use std::ops::{Deref, DerefMut};
 /// Base tile map
 #[derive(Debug, Clone)]
 pub struct Team {
-    count: u8,
-    team: Vec<Card>,
+    pub count: u8,
+    pub team: Vec<Card>,
 }
 
 impl Team {
@@ -25,7 +25,9 @@ impl Team {
 
     /// Randomize couplets till max count and set them in the Team
     pub fn random(&mut self) {
-        self.team.into_iter().for_each(|mut x| x.random());
+        for card in self.team.iter_mut() {
+            card.random();
+        }
     }
 
     #[cfg(feature = "debug")]

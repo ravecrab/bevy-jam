@@ -26,11 +26,11 @@ impl Default for Stats {
 impl Stats {
     pub fn random(&mut self) {
         let mut rng = thread_rng();
-        self.health = rng.gen();
-        self.armor = rng.gen();
-        self.speed = rng.gen();
-        self.mana = rng.gen();
-        self.attack = rng.gen();
+        self.health = rng.gen_range(100..=5000);
+        self.armor = rng.gen_range(100..=5000);
+        self.speed = rng.gen_range(100..=1000);
+        self.mana = rng.gen_range(100..=5000);
+        self.attack = rng.gen_range(100..=5000);
     }
     #[inline]
     #[must_use]
@@ -38,8 +38,11 @@ impl Stats {
         self.health
     }
 
-    #[cfg(feature = "debug")]
+    //#[cfg(feature = "debug")]
     pub fn console_output(&self) -> String {
-        format!("{:?}",self)
+        format!(
+            "Stats:\nHealth: {}\nArmor: {}\nSpeed: {}\nMana: {}\nAttack: {}",
+            self.health, self.armor, self.speed, self.mana, self.attack
+            )
     }
 }
