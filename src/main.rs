@@ -10,8 +10,8 @@ fn main() {
         .add_plugin(config::Plugin)
         .add_plugins(DefaultPlugins)
         .add_plugin(bootstrap::Plugin)
-        .add_plugin(ui::Plugin)
         .add_plugin(cards::Plugin)
+        .add_plugin(ui::Plugin)
         .add_plugin(battle::Plugin)
         .run();
 }
