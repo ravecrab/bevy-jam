@@ -8,6 +8,10 @@ use crate::{
     cards::{Attack, Card, Hitpoints},
 };
 
+/// This system runs every one second and performs the player's current in-play unit's attack
+/// TODO: Needs to be generalized to encompass the various kinds of actions a unit can have
+/// TODO: If the opponent's unit dies, need to remove that entity and have the opponent play a new card
+///       or, if out of cards, declare victory and go to store
 #[allow(clippy::type_complexity)]
 pub fn player_battle_tick(
     time: Res<Time>,
@@ -23,5 +27,9 @@ pub fn player_battle_tick(
     }
 }
 
+/// Same as the `player_battle_tick` system above, but for the opponent
+/// TODO: Needs to be generalized to encompass the various kinds of actions a unit can have
+/// TODO: Need to find a way to delay the start of the timer for this system so that the two
+///       units are not alway attacking at the same time
 #[allow(dead_code)]
 pub fn oppo_battle_tick() {}

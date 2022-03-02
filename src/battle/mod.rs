@@ -2,22 +2,48 @@ mod battle_tick;
 mod components;
 
 use bevy::prelude::{Plugin as PluginTrait, *};
+use team::*;
+use crate::state::GameState;
 
 use crate::battle::battle_tick::player_battle_tick;
-use crate::cards::Deck;
+use crate::cards::PlayerDeck;
 use crate::state::GameState;
 
 pub struct BattleTimer(Timer);
+struct AnimationTimer(Timer);
 
 pub struct Plugin;
 
 impl PluginTrait for Plugin {
     fn build(&self, app: &mut App) {
         app.add_startup_system(setup_ui)
-            .insert_resource(BattleTimer(Timer::from_seconds(1.0, true)))
-            .add_system_set(SystemSet::on_enter(GameState::Battle).with_system(player_battle_tick));
+            .insert_resource(BattleTimer(Timer::from_seconds(1.0, true))) // Change this value to change how often the units perform their actions
+            .insert_resource(AnimationTimer(Timer::from_seconds(0.1, true)))
+            .add_system_set(
+                SystemSet::on_update(GameState::Battle)
+                    .with_system(battle_tick::player_battle_tick)
+                    .with_system(battle_tick::oppo_battle_tick)
+                    .with_system(idle_animation),
+            )
+            .add_system_set(SystemSet::on_enter(GameState::CardPicking).with_system(setup_hand)) // This system does not exist yet. Shoud deal cards to player.
+            .add_system_set(SystemSet::on_update(GameState::CardPicking).with_system(pick_unit));
     }
 }
+
+/// This system runs the animation of any entity that has a TextureAtlas handle
+fn idle_animation(time: Res<Time>, texture_atlases: Res<Assets<TextureAtlas>>, mut query: Query<(&mut AnimationTimer, &mut TextureAtlasSprite, &Handle<TextureAtlas>)>) {
+    for (mut timer, mut sprite, texture_atlas_handle) in query.iter_mut() {
+        timer.tick(time.delta());
+        if timer.finished() {
+            let texture_atlas = texture_atlases.get(texture_atlas_handle).unwrap();
+            sprite.index = sprite.index + 1 % texture_atlas.textures().len();
+        }
+    }
+}
+
+/// This system is going to be responsible for recieving the player's click on a card in their hand and placing that card into play
+/// TODO: This system must load the sprite texture for the unit that the player chooses and spawn an entity with the appropriate components
+fn pick_unit(mut state: ResMut<State<GameState>>, mut interaction_query: Query<&Interaction, (Changed<Interaction>)) {}
 
 fn setup_ui(mut commands: Commands, asset_server: Res<AssetServer>) {
     // let card_front: Handle<Image> = asset_server.load("images/card/front.png");
