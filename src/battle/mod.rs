@@ -1,8 +1,11 @@
-use bevy::prelude::{Plugin as PluginTrait, *};
-use team::*;
+mod battle_tick;
+mod components;
 
-pub mod battle_tick;
-pub mod team;
+use bevy::prelude::{Plugin as PluginTrait, *};
+
+use crate::battle::battle_tick::player_battle_tick;
+use crate::cards::Deck;
+use crate::state::GameState;
 
 pub struct BattleTimer(Timer);
 
@@ -10,15 +13,16 @@ pub struct Plugin;
 
 impl PluginTrait for Plugin {
     fn build(&self, app: &mut App) {
-        app.insert_resource(BattleTimer(Timer::from_seconds(1.0, true)))
-            .add_startup_system(ui)
-            .add_system_set(SystemSet::on_enter(state::Battle).with_system(battle_tick));
+        app.add_startup_system(setup_ui)
+            .insert_resource(BattleTimer(Timer::from_seconds(1.0, true)))
+            .add_system_set(SystemSet::on_enter(GameState::Battle).with_system(player_battle_tick));
     }
 }
 
-fn ui(mut commands: Commands, asset_server: Res<AssetServer>) {
-    let card_front = asset_server.load("images/card/front.png");
+fn setup_ui(mut commands: Commands, asset_server: Res<AssetServer>) {
+    // let card_front: Handle<Image> = asset_server.load("images/card/front.png");
     let font = asset_server.load("fonts/slkscr.ttf");
+
     commands
         .spawn_bundle(NodeBundle {
             style: Style {
@@ -100,19 +104,23 @@ fn ui(mut commands: Commands, asset_server: Res<AssetServer>) {
                             ..Default::default()
                         })
                         .with_children(|parent| {
-                            parent
-                                .spawn_bundle(NodeBundle {
-                                    style: Style {
-                                        justify_content: JustifyContent::SpaceBetween,
-                                        size: Size::new(Val::Percent(50.), Val::Percent(100.)),
-                                        ..Default::default()
-                                    },
-                                    color: Color::rgba_u8(0, 0, 0, 0).into(),
+                            parent.spawn_bundle(NodeBundle {
+                                style: Style {
+                                    justify_content: JustifyContent::SpaceBetween,
+                                    size: Size::new(Val::Percent(50.), Val::Percent(100.)),
                                     ..Default::default()
-                                })
-                                .with_children(|parent| {
-                                    spawn_team(parent, card_front, font.clone())
-                                });
+                                },
+                                color: Color::rgba_u8(0, 0, 0, 0).into(),
+                                ..Default::default()
+                            });
+                            // .with_children(|parent| {
+                            //     spawn_team(
+                            //         parent,
+                            //         card_front,
+                            //         font.clone(),
+                            //         player_deck.0.clone(),
+                            //     );
+                            // });
 
                             parent
                                 .spawn_bundle(NodeBundle {
@@ -243,10 +251,8 @@ fn ui(mut commands: Commands, asset_server: Res<AssetServer>) {
         });
 }
 
-pub fn spawn_team(parent: &mut ChildBuilder, image: Handle<Image>, font: Handle<Font>) {
-    let mut team = Team::empty(4); // should move to arguments
-    team.random();
-    for card in team.team {
+pub fn spawn_team(parent: &mut ChildBuilder, image: Handle<Image>, font: Handle<Font>, deck: Deck) {
+    for card in deck.cards {
         parent
             .spawn_bundle(NodeBundle {
                 style: Style {
@@ -261,7 +267,7 @@ pub fn spawn_team(parent: &mut ChildBuilder, image: Handle<Image>, font: Handle<
             .with_children(|parent| {
                 parent.spawn_bundle(TextBundle {
                     text: Text::with_section(
-                        card.console_output(),
+                        card.name,
                         TextStyle {
                             font_size: 12.0,
                             color: Color::BLACK,

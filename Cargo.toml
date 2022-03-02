@@ -13,4 +13,3 @@ rand = "0.8.5"
 
 [features]
 default = ['bevy/dynamic']
->>>>>>> c5548ea (Create battle system, add systems to stage)

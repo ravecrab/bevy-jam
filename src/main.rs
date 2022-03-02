@@ -11,8 +11,7 @@ fn main() {
         .add_plugins(DefaultPlugins)
         .add_plugin(bootstrap::Plugin)
         .add_plugin(ui::Plugin)
-        .add_plugin(cards::CardPlugin)
+        .add_plugin(cards::Plugin)
         .add_plugin(battle::Plugin)
-        .add_state(state::Battle)
         .run();
 }

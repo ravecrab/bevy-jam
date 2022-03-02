@@ -1,87 +1,40 @@
-use bevy::prelude::*;
-use bevy::reflect::TypeUuid;
-use bevy_asset_ron::RonAssetPlugin;
-pub use {actions::*, attack::*, card::*, stats::*};
-
-mod actions;
-mod attack;
+mod action;
 mod card;
-mod stats;
+mod components;
+mod deck;
 
-#[allow(unused_imports)]
-use serde::Deserialize;
+pub use {action::*, card::*, components::*, deck::*};
 
-#[derive(Component)]
-pub struct Name(pub String);
+use bevy::prelude::{Plugin as PluginTrait, *};
+use bevy_asset_ron::RonAssetPlugin;
 
-#[derive(Component)]
-pub struct Speed(pub u32);
+pub struct CardsList(pub Vec<HandleUntyped>);
 
-#[derive(Component)]
-pub struct Attack(pub u32);
+pub struct PlayerDeck(pub Deck);
 
-#[derive(Component)]
-pub struct Hitpoints(pub u32);
+pub struct Plugin;
 
-#[derive(Component)]
-pub struct Hand;
-
-#[derive(Component)]
-pub struct Card;
-
-#[derive(Component)]
-pub struct InPlay;
-
-#[derive(Component)]
-pub struct Players;
-
-#[derive(Component)]
-pub struct Oppos;
-
-/// Only exists to load cards from text files and instantiate them. Not actually part of the ECS.
-#[allow(dead_code)]
-#[derive(serde::Deserialize, TypeUuid)]
-#[uuid = "41035a43-8099-4c30-a85e-72c45dbba279"]
-pub struct CardRep {
-    name: String,
-    desc: String,
-    actions: Vec<Action>,
-    sprites: String, // Path to sprite sheet under `<project_root>/assets/`
-}
-
-#[derive(serde::Deserialize)]
-pub enum Action {
-    Attack(u8),
-    Burn(u8),
-}
-
-pub struct CardPlugin;
-
-impl Plugin for CardPlugin {
+impl PluginTrait for Plugin {
     fn build(&self, app: &mut App) {
-        app.add_plugin(RonAssetPlugin::<CardRep>::new(&["card"]))
-            .add_startup_system(load_cards);
+        app.add_plugin(RonAssetPlugin::<CardRep>::new(&["card"]));
+        // .add_startup_system(setup);
     }
 }
 
-fn load_cards(server: Res<AssetServer>, mut commands: Commands) {
-    let card_handles = server.load_folder("cards").unwrap();
-    info!("Loaded {} cards.", card_handles.len());
+// Create the start of the player's deck of cards.
+// For the moment, just add one of each type of card.
+// Obviously, TODO: balance this in some way
+// fn setup(mut commands: Commands, asset_server: Res<AssetServer>, cards: Res<Assets<CardRep>>) {
+//     let mut deck = Deck::empty(4);
+//     let handles = asset_server.load_folder("cards").unwrap();
 
-    commands.insert_resource(card_handles);
-}
+//     info!("Loaded {} cards.", handles.len());
 
-pub struct Deck {
-    cards: Vec<CardRep>,
-}
+//     for card in handles.clone() {
+//         deck.cards
+//             .push(cards.get(card.typed::<CardRep>()).unwrap().clone());
+//     }
 
-impl Deck {
-    pub fn new() -> Self {
-        Deck { cards: Vec::new() }
-    }
-
-    pub fn shuffle(&mut self) {
-        let mut rng = rand::thread_rng();
-        self.cards.shuffle(&mut rng);
-    }
-}
+//     commands.insert_resource(CardsList(handles));
+//     commands.insert_resource(PlayerDeck(deck));
+// }
