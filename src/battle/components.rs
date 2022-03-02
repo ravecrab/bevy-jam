@@ -4,6 +4,9 @@ use bevy::prelude::*;
 pub struct InPlay;
 
 #[derive(Component)]
+pub struct Hand;
+
+#[derive(Component)]
 pub struct Players;
 
 #[derive(Component)]

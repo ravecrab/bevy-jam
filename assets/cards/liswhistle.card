@@ -4,5 +4,9 @@
     actions: [
         Attack(200)
     ],
-    sprites: "textures/units/knightderp.png"
+    sprites: "textures/units/knightderp.png",
+    sprite_size_w: 48,
+    sprite_size_h: 48,
+    sprite_rows: 1,
+    sprite_cols: 4
 )

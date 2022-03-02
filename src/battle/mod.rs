@@ -1,7 +1,12 @@
 mod battle_tick;
 mod components;
 
-use crate::{cards::Deck, state::GameState};
+use crate::cards::{Hitpoints, Name};
+use crate::{
+    battle::components::{Hand, Players},
+    cards::PlayerDeck,
+    state::GameState,
+};
 use bevy::prelude::{Plugin as PluginTrait, *};
 
 pub struct BattleTimer(Timer);
@@ -43,7 +48,37 @@ fn idle_animation(
 }
 
 // This system is not implemented yet. Shoud deal cards to player.
-fn setup_hand() {}
+fn setup_hand(
+    mut commands: Commands,
+    asset_server: Res<AssetServer>,
+    mut texture_atlases: ResMut<Assets<TextureAtlas>>,
+    mut deck: ResMut<PlayerDeck>,
+) {
+    for _ in 1..3 {
+        let card = deck.0.cards.pop();
+        match card {
+            Some(c) => {
+                let texture_handle = asset_server.load(&c.sprites);
+                let texture_atlas = TextureAtlas::from_grid(
+                    texture_handle,
+                    Vec2::new(c.sprite_size_w, c.sprite_size_h),
+                    c.sprite_cols,
+                    c.sprite_rows,
+                );
+                let texture_atlas_handle = texture_atlases.add(texture_atlas);
+                commands
+                    .spawn()
+                    .insert_bundle((Name(c.name), Hitpoints(3), Hand, Players))
+                    .insert_bundle(SpriteSheetBundle {
+                        texture_atlas: texture_atlas_handle,
+                        transform: Transform::from_scale(Vec3::splat(6.0)),
+                        ..Default::default()
+                    });
+            }
+            None => break, // No cards left in the player's deck... TODO: what now?
+        };
+    }
+}
 
 /// This system is going to be responsible for recieving the player's click on a card in their hand and placing that card into play
 /// TODO: This system must load the sprite texture for the unit that the player chooses and spawn an entity with the appropriate components
@@ -287,8 +322,13 @@ fn setup_ui(mut commands: Commands, asset_server: Res<AssetServer>) {
         });
 }
 
-pub fn spawn_team(parent: &mut ChildBuilder, image: Handle<Image>, font: Handle<Font>, deck: Deck) {
-    for card in deck.cards {
+pub fn spawn_team(
+    parent: &mut ChildBuilder,
+    image: Handle<Image>,
+    font: Handle<Font>,
+    deck: PlayerDeck,
+) {
+    for card in deck.0.cards {
         parent
             .spawn_bundle(NodeBundle {
                 style: Style {

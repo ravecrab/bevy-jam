@@ -11,6 +11,6 @@ impl PluginTrait for Plugin {
             // TODO: Switch to `Intro` state for a release build or
             // another state for debug builds. Also, this could be in
             // a config file, maybe?
-            .add_state(GameState::CardPicking);
+            .add_state(GameState::Loading);
     }
 }
