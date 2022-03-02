@@ -9,6 +9,7 @@ pub use {action::*, card::*, components::*, deck::*};
 use bevy::asset::LoadState;
 use bevy::prelude::{Plugin as PluginTrait, *};
 use bevy_asset_ron::RonAssetPlugin;
+use rand::seq::SliceRandom;
 
 #[derive(Debug)]
 pub struct AllCards(pub Vec<HandleUntyped>);
@@ -27,10 +28,10 @@ impl PluginTrait for Plugin {
 }
 
 fn load_cards(mut commands: Commands, asset_server: Res<AssetServer>) {
-    let handle = asset_server
+    let handles = asset_server
         .load_folder("cards")
         .expect("Couldn't load assets!");
-    commands.insert_resource(AllCards(handle));
+    commands.insert_resource(AllCards(handles));
 }
 
 fn check_loads(
@@ -45,6 +46,7 @@ fn check_loads(
     }
     state.set(GameState::CardPicking).unwrap();
 }
+
 // Create the start of the player's deck of cards.
 // For the moment, just add one of each type of card.
 // Obviously, TODO: balance this in some way
@@ -54,20 +56,17 @@ fn create_player_deck(
     cards: Res<AllCards>,
     asset_server: Res<AssetServer>,
 ) {
-    let mut deck = Deck::empty(4);
+    let mut deck = Deck::empty();
+    let cards_ref = &cards.0;
 
-    for card in cards.0.clone() {
-        let handle = card;
+    for _ in 0..3 {
+        let handle = cards_ref.choose(&mut rand::thread_rng()).unwrap();
 
-        if let LoadState::Loaded = asset_server.get_load_state(&handle) {
+        if let LoadState::Loaded = asset_server.get_load_state(handle) {
             info!("Handle loaded!");
         }
-        // Debug information while struggling with the load
-        info!("{:?}", handle);
-        info!("{:?}", assets);
-        info!("{:?}", assets.get(&handle));
-        info!("{:?}", assets.get("cards/liswhistle.card"));
-        // deck.cards.push(assets.get(card).unwrap().clone());
+
+        deck.cards.push(assets.get(handle).unwrap().clone());
     }
 
     commands.insert_resource(PlayerDeck(deck));

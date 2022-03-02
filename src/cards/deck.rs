@@ -13,9 +13,11 @@ impl Deck {
     /// Generates an empty team
     #[inline]
     #[must_use]
-    pub fn empty(count: u8) -> Self {
-        let cards: Vec<CardRep> = (0..count).into_iter().map(|_| CardRep::default()).collect();
-        Self { count, cards }
+    pub fn empty() -> Self {
+        Self {
+            count: 0,
+            cards: vec![],
+        }
     }
 
     #[cfg(feature = "debug")]
