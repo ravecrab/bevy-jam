@@ -1,4 +1,4 @@
-mod battle_stage;
+pub mod battle_stage;
 mod opponent;
 pub mod player;
 
@@ -10,6 +10,7 @@ pub fn setup_ui(mut commands: Commands, asset_server: Res<AssetServer>) {
 
     commands
         .spawn_bundle(NodeBundle {
+            color: Color::rgba_u8(0, 0, 0, 0).into(),
             style: Style {
                 flex_direction: FlexDirection::Column,
                 size: Size::new(Val::Percent(100.), Val::Percent(100.)),

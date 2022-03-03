@@ -33,7 +33,8 @@ pub fn spawn_card(
         .spawn_bundle(ButtonBundle {
             style: Style {
                 flex_direction: FlexDirection::Column,
-                justify_content: JustifyContent::Center,
+                justify_content: JustifyContent::FlexStart,
+                align_items: AlignItems::Center,
                 size: Size::new(Val::Percent(30.), Val::Percent(100.)),
                 overflow: Overflow::Hidden,
                 ..Default::default()
@@ -50,7 +51,16 @@ pub fn spawn_card(
                         position_type: PositionType::Absolute,
                         // Overflow hack to show the first frame of the texture atlas.
                         // TODO: Replace for something better?
-                        size: Size::new(Val::Percent(400.), Val::Percent(100.)),
+                        size: Size::new(
+                            Val::Percent(card.sprite_cols as f32 * 100.),
+                            Val::Percent(80.),
+                        ),
+                        position: Rect {
+                            top: Val::Px(0.),
+                            bottom: Val::Px(20.),
+                            left: Val::Px(0.),
+                            right: Val::Px(0.),
+                        },
                         ..Default::default()
                     },
                     image: texture.clone().into(),
@@ -61,11 +71,11 @@ pub fn spawn_card(
             parent.spawn_bundle(TextBundle {
                 focus_policy: FocusPolicy::Pass,
                 style: Style {
-                    max_size: Size::new(Val::Px(175.), Val::Undefined),
+                    max_size: Size::new(Val::Px(150.), Val::Px(100.)),
                     position: Rect {
-                        top: Val::Px(96.),
-                        bottom: Val::Px(0.),
-                        left: Val::Px(40.),
+                        top: Val::Px(0.),
+                        bottom: Val::Px(7.),
+                        left: Val::Px(0.),
                         right: Val::Px(0.),
                     },
                     ..Default::default()
@@ -78,8 +88,8 @@ pub fn spawn_card(
                         font: font.clone(),
                     },
                     TextAlignment {
-                        vertical: VerticalAlign::Center,
                         horizontal: HorizontalAlign::Center,
+                        ..Default::default()
                     },
                 ),
                 ..Default::default()
