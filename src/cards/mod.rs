@@ -66,6 +66,7 @@ fn create_player_deck(
             info!("Handle loaded!");
         }
 
+        deck.count += 1;
         deck.cards.push(assets.get(handle).unwrap().clone());
     }
 
