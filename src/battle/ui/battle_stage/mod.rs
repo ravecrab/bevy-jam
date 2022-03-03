@@ -1,6 +1,8 @@
 use bevy::prelude::*;
 
-#[allow(dead_code)]
+#[derive(Component)]
+pub struct PlayerStage;
+
 pub fn create_ui(parent: &mut ChildBuilder) {
     parent
         .spawn_bundle(NodeBundle {
@@ -16,7 +18,7 @@ pub fn create_ui(parent: &mut ChildBuilder) {
                     size: Size::new(Val::Percent(50.), Val::Percent(100.)),
                     ..Default::default()
                 },
-                color: Color::GRAY.into(),
+                color: Color::CRIMSON.into(),
                 ..Default::default()
             });
 
@@ -25,7 +27,7 @@ pub fn create_ui(parent: &mut ChildBuilder) {
                     size: Size::new(Val::Percent(50.), Val::Percent(100.)),
                     ..Default::default()
                 },
-                color: Color::WHITE.into(),
+                color: Color::TEAL.into(),
                 ..Default::default()
             });
         });
