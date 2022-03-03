@@ -3,6 +3,7 @@ mod components;
 mod ui;
 
 use bevy::prelude::{Plugin as PluginTrait, *};
+use bevy_kira_audio::Audio;
 
 use crate::{
     battle::{
@@ -34,7 +35,11 @@ impl PluginTrait for Plugin {
                     .with_system(idle_animation),
             )
             .add_system_set(SystemSet::on_enter(GameState::Loading).with_system(setup_ui))
-            .add_system_set(SystemSet::on_enter(GameState::CardPicking).with_system(setup_hand))
+            .add_system_set(
+                SystemSet::on_enter(GameState::CardPicking)
+                    .with_system(setup_hand)
+                    .with_system(play_music),
+            )
             .add_system_set(SystemSet::on_update(GameState::CardPicking).with_system(pick_unit));
     }
 }
@@ -53,6 +58,10 @@ fn idle_animation(
             sprite.index = (sprite.index + 1) % texture_atlas.textures.len();
         }
     }
+}
+
+fn play_music(asset_server: Res<AssetServer>, audio: Res<Audio>) {
+    audio.play_looped(asset_server.load("sounds/battle-theme-demo.ogg"));
 }
 
 // This system is not implemented yet. Shoud deal cards to player.

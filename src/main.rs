@@ -1,4 +1,6 @@
 use bevy::prelude::*;
+use bevy_kira_audio::AudioPlugin;
+
 use bevy_jam::{battle, bootstrap, cards, config, ui};
 
 fn main() {
@@ -10,6 +12,7 @@ fn main() {
         .add_plugin(ui::Plugin)
         .add_plugin(config::Plugin)
         .add_plugins(DefaultPlugins)
+        .add_plugin(AudioPlugin)
         .add_plugin(bootstrap::Plugin)
         .add_plugin(cards::Plugin)
         .add_plugin(battle::Plugin)
