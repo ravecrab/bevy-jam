@@ -1,0 +1,12 @@
+(
+    name: "Deviant Cat-ipular",
+    desc: "A cat-like being that lives among insects.\n\n\"Be quiet... Nya!? Or somethin' bad-Nya!\"",
+    actions: [
+        Attack(100)
+    ],
+    sprites: "textures/units/catderp.png",
+    sprite_size_w: 48,
+    sprite_size_h: 48,
+    sprite_rows: 1,
+    sprite_cols: 6
+)

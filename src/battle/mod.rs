@@ -8,8 +8,10 @@ use crate::{
     battle::{
         components::{Hand, Players},
         ui::{
-            player::hand,
-            player::hand::{CardInHand, HandContainer},
+            player::{
+                hand::{self, CardInHand, HandContainer},
+                info::InfoText,
+            },
             setup_ui,
         },
     },
@@ -35,7 +37,9 @@ impl PluginTrait for Plugin {
             )
             .add_system_set(SystemSet::on_enter(GameState::Loading).with_system(setup_ui))
             .add_system_set(SystemSet::on_enter(GameState::CardPicking).with_system(setup_hand))
-            .add_system_set(SystemSet::on_update(GameState::CardPicking).with_system(pick_unit));
+            .add_system_set(
+                SystemSet::on_update(GameState::CardPicking).with_system(interact_with_card),
+            );
     }
 }
 
@@ -100,11 +104,17 @@ fn setup_hand(
 
 /// This system is going to be responsible for recieving the player's click on a card in their hand and placing that card into play
 /// TODO: This system must load the sprite texture for the unit that the player chooses and spawn an entity with the appropriate components
-fn pick_unit(query: Query<(&Interaction, &CardInHand), (Changed<Interaction>, With<Button>)>) {
-    for (interaction, card) in query.iter() {
+/// TODO: Maybe move this into UI?
+fn interact_with_card(
+    inter_query: Query<(&Interaction, &CardInHand), (Changed<Interaction>, With<Button>)>,
+    mut info_query: Query<&mut Text, With<InfoText>>,
+) {
+    for (interaction, card) in inter_query.iter() {
         match *interaction {
             Interaction::Hovered => {
-                info!("hover {:?}", card.0);
+                if let Ok(mut text) = info_query.get_single_mut() {
+                    text.sections[0].value = card.0.desc.clone();
+                }
             }
             Interaction::Clicked => {
                 info!("click {:?}", card.0);
