@@ -44,17 +44,20 @@ pub fn spawn_card(
         // TODO: Definitely replace with something better
         .insert(CardInHand(card.clone()))
         .with_children(|parent| {
-            parent.spawn_bundle(NodeBundle {
-                style: Style {
-                    position_type: PositionType::Absolute,
-                    // Overflow hack to show the first frame of the texture atlas.
-                    // TODO: Replace for something better?
-                    size: Size::new(Val::Percent(400.), Val::Percent(100.)),
+            parent
+                .spawn_bundle(NodeBundle {
+                    style: Style {
+                        position_type: PositionType::Absolute,
+                        // Overflow hack to show the first frame of the texture atlas.
+                        // TODO: Replace for something better?
+                        size: Size::new(Val::Percent(400.), Val::Percent(100.)),
+                        ..Default::default()
+                    },
+                    image: texture.clone().into(),
                     ..Default::default()
-                },
-                image: texture.clone().into(),
-                ..Default::default()
-            });
+                })
+                // Allow passing interactions to the button
+                .insert(FocusPolicy::Pass);
             parent.spawn_bundle(TextBundle {
                 focus_policy: FocusPolicy::Pass,
                 style: Style {

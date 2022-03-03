@@ -104,14 +104,12 @@ fn pick_unit(query: Query<(&Interaction, &CardInHand), (Changed<Interaction>, Wi
     for (interaction, card) in query.iter() {
         match *interaction {
             Interaction::Hovered => {
-                info!("{:?}", card.0);
+                info!("hover {:?}", card.0);
             }
             Interaction::Clicked => {
-                info!("{:?}", card.0);
+                info!("click {:?}", card.0);
             }
-            Interaction::None => {
-                info!("{:?}", card.0);
-            }
+            _ => (),
         }
     }
 }
