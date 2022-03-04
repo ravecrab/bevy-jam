@@ -122,6 +122,7 @@ fn interact_with_card(
     sprite_query: Query<Entity, (With<TextureAtlasSprite>, With<InPlay>, With<Players>)>,
     mut hand_query: Query<Entity, With<HandContainer>>,
     mut deck: ResMut<PlayerDeck>,
+    audio: Res<Audio>,
 ) {
     for (card_entity, interaction, card) in inter_query.iter() {
         match *interaction {
@@ -135,6 +136,10 @@ fn interact_with_card(
                 // TODO: Move into own system
                 if let Ok(sprite_entity) = sprite_query.get_single() {
                     commands.entity(sprite_entity).despawn();
+                }
+
+                if card.0.name == "Deviant Cat-ipular" {
+                    audio.play(asset_server.load("sounds/nya-dialog.wav"));
                 }
 
                 let texture_handle = asset_server.load(&card.0.sprites);

@@ -7,7 +7,6 @@ edition = "2021"
 
 [dependencies]
 bevy_asset_ron = "0.3.0"
-bevy_kira_audio = "0.8"
 serde = "1.0"
 rand = "0.8.5"
 
@@ -18,3 +17,7 @@ features = ["bevy_gilrs", "bevy_winit", "render", "png", "hdr", "vorbis", "x11",
 
 [features]
 default = ['bevy/dynamic']
+
+[dependencies.bevy_kira_audio]
+version = "0.8"
+features = ["wav", "ogg"]
