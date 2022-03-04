@@ -4,6 +4,11 @@ pub mod player;
 use bevy::prelude::*;
 
 pub fn setup_ui(mut commands: Commands, asset_server: Res<AssetServer>) {
+    commands.spawn_bundle(SpriteBundle {
+        texture: asset_server.load("textures/backgrounds/background.png"),
+        transform: Transform::from_scale(Vec3::splat(6.0)),
+        ..Default::default()
+    });
     commands
         .spawn_bundle(NodeBundle {
             style: Style {

@@ -119,14 +119,14 @@ fn spawn_opponent_card(
                 texture_atlas: texture_atlas_handle,
                 transform: Transform {
                     // TODO: Make coordinates relative to screen size
-                    translation: Vec3::new(-500.0, 0.0, 2.0),
+                    translation: Vec3::new(-500.0, 200.0, 2.0),
                     scale: Vec3::splat(6.0),
                     ..Default::default()
                 },
                 ..Default::default()
             });
     }
-    state.set(GameState::Battle);
+    state.set(GameState::Battle).unwrap();
 }
 
 // This system is not implemented yet. Shoud deal cards to player.
@@ -225,7 +225,7 @@ fn interact_with_card(
                         texture_atlas: texture_atlas_handle,
                         transform: Transform {
                             // TODO: Make coordinates relative to screen size
-                            translation: Vec3::new(500.0, 0.0, 2.0),
+                            translation: Vec3::new(500.0, 200.0, 2.0),
                             // Flip sprite to face opponent
                             rotation: Quat::from_rotation_y(std::f32::consts::PI),
                             scale: Vec3::splat(6.0),
