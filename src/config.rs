@@ -10,9 +10,9 @@ pub struct Plugin;
 const GAME_TITLE: &str = "Bevy Jam";
 const GAME_WIDTH: f32 = 320.0;
 const GAME_HEIGHT: f32 = 180.0;
-const GAME_SCALE: f32 = 1.0;
+const GAME_SCALE: f32 = 6.0;
 const WINDOW_VSYNC: bool = false;
-const WINDOW_RESIZABLE: bool = false;
+const WINDOW_RESIZABLE: bool = true;
 const WINDOW_MODE: WindowMode = WindowMode::BorderlessFullscreen;
 
 impl PluginTrait for Plugin {

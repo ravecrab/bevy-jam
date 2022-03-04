@@ -3,7 +3,6 @@ use crate::cards::Action;
 use bevy::reflect::TypeUuid;
 
 /// Only exists to load cards from text files and instantiate them. Not actually part of the ECS.
-#[allow(dead_code)]
 #[derive(serde::Deserialize, TypeUuid, Debug, Clone, PartialEq, Default)]
 #[uuid = "41035a43-8099-4c30-a85e-72c45dbba279"]
 pub struct CardRep {

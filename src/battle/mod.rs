@@ -4,13 +4,14 @@ mod ui;
 
 use bevy::prelude::{Plugin as PluginTrait, *};
 use bevy_kira_audio::Audio;
+use rand::{seq::SliceRandom, thread_rng};
 
 use crate::{
     battle::{
         components::{InPlay, Players},
         ui::{
-            battle_stage::PlayerStage,
             player::{
+                deck::{self, CardInDeck, DeckContainer},
                 hand::{self, CardInHand, HandContainer},
                 info::InfoText,
             },
@@ -44,7 +45,6 @@ impl PluginTrait for Plugin {
                     .with_system(setup_hand)
                     .with_system(play_music),
             )
-            .add_system_set(SystemSet::on_enter(GameState::CardPicking).with_system(setup_hand))
             .add_system_set(
                 SystemSet::on_update(GameState::CardPicking).with_system(interact_with_card),
             );
@@ -76,21 +76,30 @@ fn setup_hand(
     mut commands: Commands,
     asset_server: Res<AssetServer>,
     mut deck: ResMut<PlayerDeck>,
-    mut query: Query<Entity, With<HandContainer>>,
+    mut hand_query: Query<Entity, With<HandContainer>>,
+    mut deck_query: Query<Entity, With<DeckContainer>>,
 ) {
-    let font: Handle<Font> = asset_server.load("fonts/slkscr.ttf");
-    let card_front: Handle<Image> = asset_server.load("images/card/front.png");
+    // TODO: Move this out to another system
+    deck.0.shuffle(&mut thread_rng());
+
+    // TODO: Move this out to another system
+    for i in 0..(deck.0.len() - 3) {
+        if let Ok(node_entity) = deck_query.get_single_mut() {
+            commands.entity(node_entity).with_children(|parent| {
+                deck::spawn_card(parent, &asset_server, i);
+            });
+        };
+    }
 
     for _ in 0..3 {
         let card = deck.0.cards.pop();
+
         match card {
             Some(c) => {
-                let texture_handle = asset_server.load(&c.sprites);
-
-                if let Ok(node_entity) = query.get_single_mut() {
-                    commands.entity(node_entity).with_children(|parent| {
-                        hand::spawn_card(parent, &card_front, &font, &c, &texture_handle)
-                    });
+                if let Ok(node_entity) = hand_query.get_single_mut() {
+                    commands
+                        .entity(node_entity)
+                        .with_children(|parent| hand::spawn_card(parent, &asset_server, &c));
                 };
             }
             None => break, // No cards left in the player's deck... TODO: what now?
@@ -100,19 +109,21 @@ fn setup_hand(
 
 // COMPLETED:This system must load the sprite texture for the unit that
 // the player chooses and spawn an entity with the appropriate components
-// TODO: Split this function into other different functions or systems
+// TODO: Split this CHONKY LAD into other different functions or systems
 /// This system is going to be responsible for recieving the
 /// player's click on a card in their hand and placing that card into play
 fn interact_with_card(
     mut commands: Commands,
     asset_server: Res<AssetServer>,
     mut texture_atlases: ResMut<Assets<TextureAtlas>>,
-    inter_query: Query<(&Interaction, &CardInHand), (Changed<Interaction>, With<Button>)>,
     mut info_query: Query<&mut Text, With<InfoText>>,
-    mut stage_query: Query<Entity, With<PlayerStage>>,
+    inter_query: Query<(Entity, &Interaction, &CardInHand), (Changed<Interaction>, With<Button>)>,
+    deck_query: Query<(Entity, &CardInDeck)>,
     sprite_query: Query<Entity, (With<TextureAtlasSprite>, With<InPlay>, With<Players>)>,
+    mut hand_query: Query<Entity, With<HandContainer>>,
+    mut deck: ResMut<PlayerDeck>,
 ) {
-    for (interaction, card) in inter_query.iter() {
+    for (card_entity, interaction, card) in inter_query.iter() {
         match *interaction {
             Interaction::Hovered => {
                 if let Ok(mut text) = info_query.get_single_mut() {
@@ -151,6 +162,33 @@ fn interact_with_card(
                         },
                         ..Default::default()
                     });
+
+                // Remove card from hand
+                commands.entity(card_entity).despawn_recursive();
+
+                // Draw another card
+                if let Ok(node_entity) = hand_query.get_single_mut() {
+                    let card_opt = deck.0.cards.pop();
+
+                    match card_opt {
+                        Some(card) => {
+                            commands.entity(node_entity).with_children(|parent| {
+                                hand::spawn_card(parent, &asset_server, &card)
+                            });
+                        }
+                        None => (), // No cards left in the player's deck... TODO: what now?
+                    }
+                };
+
+                // Remove card from deck
+                for (card_entity, card_in_deck) in deck_query.iter() {
+                    if let CardInDeck(index) = card_in_deck {
+                        // This takes advantage of the fact that the deck length decreases
+                        if *index == deck.0.cards.len() {
+                            commands.entity(card_entity).despawn_recursive();
+                        }
+                    }
+                }
             }
             // No interaction
             _ => (),

@@ -6,13 +6,17 @@ pub struct InfoContainer;
 #[derive(Component)]
 pub struct InfoText;
 
-pub fn create_container(parent: &mut ChildBuilder, font: &Handle<Font>) {
+pub fn create_container(parent: &mut ChildBuilder, asset_server: &Res<AssetServer>) {
+    let font: Handle<Font> = asset_server.load("fonts/slkscr.ttf");
+
     parent
         .spawn_bundle(NodeBundle {
             style: Style {
+                align_self: AlignSelf::FlexEnd,
                 justify_content: JustifyContent::Center,
                 align_items: AlignItems::Center,
-                size: Size::new(Val::Percent(40.), Val::Percent(100.)),
+                size: Size::new(Val::Px(400.), Val::Px(300.)),
+                padding: Rect::all(Val::Px(20.)),
                 ..Default::default()
             },
             color: Color::TEAL.into(),
@@ -23,7 +27,7 @@ pub fn create_container(parent: &mut ChildBuilder, font: &Handle<Font>) {
             parent
                 .spawn_bundle(TextBundle {
                     style: Style {
-                        max_size: Size::new(Val::Px(450.), Val::Undefined),
+                        max_size: Size::new(Val::Px(360.), Val::Undefined),
                         ..Default::default()
                     },
                     text: Text::with_section(
@@ -31,7 +35,7 @@ pub fn create_container(parent: &mut ChildBuilder, font: &Handle<Font>) {
                         TextStyle {
                             font_size: 24.0,
                             color: Color::WHITE,
-                            font: font.clone(),
+                            font: font,
                         },
                         TextAlignment {
                             vertical: VerticalAlign::Center,

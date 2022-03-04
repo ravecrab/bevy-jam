@@ -9,12 +9,14 @@ pub use {action::*, card::*, components::*, deck::*};
 use bevy::asset::LoadState;
 use bevy::prelude::{Plugin as PluginTrait, *};
 use bevy_asset_ron::RonAssetPlugin;
-use rand::seq::SliceRandom;
+use rand::{seq::SliceRandom, thread_rng};
 
 #[derive(Debug)]
 pub struct AllCards(pub Vec<HandleUntyped>);
 
 pub struct PlayerDeck(pub Deck);
+
+pub struct OpponentDeck(pub Deck);
 
 pub struct Plugin;
 
@@ -23,7 +25,10 @@ impl PluginTrait for Plugin {
         app.add_plugin(RonAssetPlugin::<CardRep>::new(&["card"]))
             .add_system_set(SystemSet::on_enter(GameState::Loading).with_system(load_cards))
             .add_system_set(SystemSet::on_update(GameState::Loading).with_system(check_loads))
-            .add_system_set(SystemSet::on_exit(GameState::Loading).with_system(create_player_deck));
+            .add_system_set(SystemSet::on_exit(GameState::Loading).with_system(create_player_deck))
+            .add_system_set(
+                SystemSet::on_exit(GameState::Loading).with_system(create_opponent_deck),
+            );
     }
 }
 
@@ -59,16 +64,38 @@ fn create_player_deck(
     let mut deck = Deck::empty();
     let cards_ref = &cards.0;
 
-    for _ in 0..3 {
-        let handle = cards_ref.choose(&mut rand::thread_rng()).unwrap();
+    for _ in 0..5 {
+        let handle = cards_ref.choose(&mut thread_rng()).unwrap();
 
         if let LoadState::Loaded = asset_server.get_load_state(handle) {
-            info!("Handle loaded!");
+            let card = assets.get(handle).unwrap().clone();
+            deck.count += 1;
+            deck.cards.push(card);
         }
-
-        deck.count += 1;
-        deck.cards.push(assets.get(handle).unwrap().clone());
     }
 
     commands.insert_resource(PlayerDeck(deck));
+}
+
+// TODO: DRY this system and the one above
+fn create_opponent_deck(
+    mut commands: Commands,
+    assets: Res<Assets<CardRep>>,
+    cards: Res<AllCards>,
+    asset_server: Res<AssetServer>,
+) {
+    let mut deck = Deck::empty();
+    let cards_ref = &cards.0;
+
+    for _ in 0..5 {
+        let handle = cards_ref.choose(&mut rand::thread_rng()).unwrap();
+
+        if let LoadState::Loaded = asset_server.get_load_state(handle) {
+            let card = assets.get(handle).unwrap().clone();
+            deck.count += 1;
+            deck.cards.push(card);
+        }
+    }
+
+    commands.insert_resource(OpponentDeck(deck));
 }
