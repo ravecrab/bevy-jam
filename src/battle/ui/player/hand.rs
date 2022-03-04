@@ -13,7 +13,9 @@ pub fn create_container(parent: &mut ChildBuilder) {
         .spawn_bundle(NodeBundle {
             style: Style {
                 align_self: AlignSelf::Center,
-                size: Size::new(Val::Px(600.), Val::Px(300.)),
+                justify_content: JustifyContent::SpaceEvenly,
+                size: Size::new(Val::Px(556.), Val::Px(229.)),
+                padding: Rect::all(Val::Px(12.)),
                 ..Default::default()
             },
             color: Color::rgba_u8(0, 0, 0, 0).into(),
@@ -33,13 +35,8 @@ pub fn spawn_card(parent: &mut ChildBuilder, asset_server: &Res<AssetServer>, ca
                 flex_direction: FlexDirection::Column,
                 justify_content: JustifyContent::Center,
                 align_items: AlignItems::Center,
-                size: Size::new(Val::Px(180.), Val::Px(300.)),
+                size: Size::new(Val::Px(153.), Val::Px(205.)),
                 overflow: Overflow::Hidden,
-                margin: Rect {
-                    left: Val::Px(10.),
-                    right: Val::Px(10.),
-                    ..Default::default()
-                },
                 ..Default::default()
             },
             image: card_front.into(),
@@ -57,8 +54,8 @@ pub fn spawn_card(parent: &mut ChildBuilder, asset_server: &Res<AssetServer>, ca
                         size: Size::new(Val::Px(144. * card.sprite_cols as f32), Val::Px(144.)),
                         position: Rect {
                             top: Val::Px(0.),
-                            bottom: Val::Px(130.),
-                            left: Val::Px(20.),
+                            bottom: Val::Px(30.),
+                            left: Val::Px(5.),
                             right: Val::Px(0.),
                         },
                         ..Default::default()
@@ -68,29 +65,29 @@ pub fn spawn_card(parent: &mut ChildBuilder, asset_server: &Res<AssetServer>, ca
                 })
                 // Allow passing interactions to the button
                 .insert(FocusPolicy::Pass);
-            parent.spawn_bundle(TextBundle {
-                focus_policy: FocusPolicy::Pass,
-                style: Style {
-                    max_size: Size::new(Val::Px(150.), Val::Px(100.)),
-                    position: Rect {
-                        top: Val::Px(50.),
-                        ..Default::default()
-                    },
-                    ..Default::default()
-                },
-                text: Text::with_section(
-                    &card.name,
-                    TextStyle {
-                        font_size: 16.0,
-                        color: Color::rgba_u8(17, 17, 17, 255),
-                        font: font,
-                    },
-                    TextAlignment {
-                        horizontal: HorizontalAlign::Center,
-                        ..Default::default()
-                    },
-                ),
-                ..Default::default()
-            });
+            // parent.spawn_bundle(TextBundle {
+            //     focus_policy: FocusPolicy::Pass,
+            //     style: Style {
+            //         max_size: Size::new(Val::Px(150.), Val::Px(100.)),
+            //         position: Rect {
+            //             top: Val::Px(50.),
+            //             ..Default::default()
+            //         },
+            //         ..Default::default()
+            //     },
+            //     text: Text::with_section(
+            //         &card.name,
+            //         TextStyle {
+            //             font_size: 16.0,
+            //             color: Color::rgba_u8(17, 17, 17, 255),
+            //             font: font,
+            //         },
+            //         TextAlignment {
+            //             horizontal: HorizontalAlign::Center,
+            //             ..Default::default()
+            //         },
+            //     ),
+            //     ..Default::default()
+            // });
         });
 }

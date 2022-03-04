@@ -79,7 +79,7 @@ fn idle_animation(
 }
 
 fn play_music(asset_server: Res<AssetServer>, audio: Res<Audio>) {
-    audio.play_looped(asset_server.load("sounds/battle-theme-demo.ogg"));
+    audio.play_looped(asset_server.load("sounds/BattleMusic.ogg"));
 }
 
 // Spawn the opponent's card when we enter battle
@@ -119,8 +119,8 @@ fn spawn_opponent_card(
                 texture_atlas: texture_atlas_handle,
                 transform: Transform {
                     // TODO: Make coordinates relative to screen size
-                    translation: Vec3::new(-500.0, 200.0, 2.0),
-                    scale: Vec3::splat(6.0),
+                    translation: Vec3::new(-250.0, 10.0, 2.0),
+                    scale: Vec3::splat(4.0),
                     ..Default::default()
                 },
                 ..Default::default()
@@ -225,10 +225,10 @@ fn interact_with_card(
                         texture_atlas: texture_atlas_handle,
                         transform: Transform {
                             // TODO: Make coordinates relative to screen size
-                            translation: Vec3::new(500.0, 200.0, 2.0),
+                            translation: Vec3::new(250.0, 10.0, 2.0),
                             // Flip sprite to face opponent
                             rotation: Quat::from_rotation_y(std::f32::consts::PI),
-                            scale: Vec3::splat(6.0),
+                            scale: Vec3::splat(4.0),
                         },
                         ..Default::default()
                     });

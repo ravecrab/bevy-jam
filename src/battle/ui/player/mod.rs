@@ -9,11 +9,10 @@ pub fn create_ui(parent: &mut ChildBuilder, asset_server: &Res<AssetServer>) {
         .spawn_bundle(NodeBundle {
             style: Style {
                 justify_content: JustifyContent::SpaceBetween,
-                padding: Rect::all(Val::Px(30.)),
-                size: Size::new(Val::Percent(100.), Val::Px(360.)),
+                size: Size::new(Val::Percent(100.), Val::Px(229.)),
                 ..Default::default()
             },
-            color: Color::rgba_u8(17, 17, 17, 255).into(),
+            color: Color::rgba_u8(0, 0, 0, 0).into(),
             ..Default::default()
         })
         .with_children(|parent| {

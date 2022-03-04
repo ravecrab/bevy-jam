@@ -12,7 +12,7 @@ use bevy_asset_ron::RonAssetPlugin;
 use rand::{seq::SliceRandom, thread_rng};
 
 #[derive(Debug)]
-pub struct AllCards(pub Vec<HandleUntyped>);
+pub struct AllCards(pub Vec<Handle<CardRep>>);
 
 pub struct PlayerDeck(pub Deck);
 
@@ -33,10 +33,11 @@ impl PluginTrait for Plugin {
 }
 
 fn load_cards(mut commands: Commands, asset_server: Res<AssetServer>) {
-    let handles = asset_server
-        .load_folder("cards")
-        .expect("Couldn't load assets!");
-    commands.insert_resource(AllCards(handles));
+    // `load_folder` does not work on wasm
+    // see: https://github.com/bevyengine/bevy/issues/2916
+    let catipular: Handle<CardRep> = asset_server.load("cards/catipular.card");
+    let liswhistle: Handle<CardRep> = asset_server.load("cards/liswhistle.card");
+    commands.insert_resource(AllCards(vec![catipular, liswhistle]));
 }
 
 fn check_loads(

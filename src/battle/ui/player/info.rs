@@ -15,11 +15,11 @@ pub fn create_container(parent: &mut ChildBuilder, asset_server: &Res<AssetServe
                 align_self: AlignSelf::FlexEnd,
                 justify_content: JustifyContent::Center,
                 align_items: AlignItems::Center,
-                size: Size::new(Val::Px(400.), Val::Px(300.)),
+                size: Size::new(Val::Px(229.), Val::Px(229.)),
                 padding: Rect::all(Val::Px(20.)),
                 ..Default::default()
             },
-            color: Color::TEAL.into(),
+            color: Color::rgba_u8(0, 0, 0, 0).into(),
             ..Default::default()
         })
         .insert(InfoContainer)
@@ -27,13 +27,13 @@ pub fn create_container(parent: &mut ChildBuilder, asset_server: &Res<AssetServe
             parent
                 .spawn_bundle(TextBundle {
                     style: Style {
-                        max_size: Size::new(Val::Px(360.), Val::Undefined),
+                        max_size: Size::new(Val::Px(189.), Val::Undefined),
                         ..Default::default()
                     },
                     text: Text::with_section(
                         "",
                         TextStyle {
-                            font_size: 24.0,
+                            font_size: 16.0,
                             color: Color::WHITE,
                             font: font,
                         },
