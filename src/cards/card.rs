@@ -9,6 +9,7 @@ pub struct CardRep {
     pub name: String,
     pub desc: String,
     pub actions: Vec<Action>,
+    pub hp: i32,
     pub sprites: String, // Path to sprite sheet under `<project_root>/assets/`
     pub sprite_size_w: f32,
     pub sprite_size_h: f32,

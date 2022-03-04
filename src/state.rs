@@ -3,6 +3,7 @@ pub enum GameState {
     Loading,
     Intro,
     CardPicking,
+    OpponentCardPick,
     Battle,
     Victory,
     Store,

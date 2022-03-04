@@ -4,6 +4,7 @@
     actions: [
         Attack(200)
     ],
+    hp: 800,
     sprites: "textures/units/knightderp.png",
     sprite_size_w: 48,
     sprite_size_h: 48,

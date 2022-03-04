@@ -8,7 +8,11 @@ use rand::{seq::SliceRandom, thread_rng};
 
 use crate::{
     battle::{
-        components::{InPlay, Players},
+        battle_tick::{
+            bring_out_your_dead_oppo, bring_out_your_dead_player, oppo_battle_tick,
+            player_battle_tick,
+        },
+        components::{InPlay, Opponents, Players},
         ui::{
             player::{
                 deck::{self, CardInDeck, DeckContainer},
@@ -18,7 +22,7 @@ use crate::{
             setup_ui,
         },
     },
-    cards::{Hitpoints, Name, PlayerDeck},
+    cards::{AllCards, CardRep, Hitpoints, Name, PlayerDeck},
     state::GameState,
 };
 
@@ -33,11 +37,7 @@ impl PluginTrait for Plugin {
         app.insert_resource(BattleTimer(Timer::from_seconds(1.0, true))) // Change this value to change how often the units perform their actions
             .insert_resource(AnimationTimer(Timer::from_seconds(0.1, true)))
             .add_system_set(
-                SystemSet::on_update(GameState::CardPicking)
-                    // .with_system(battle_tick::player_battle_tick)
-                    // .with_system(battle_tick::oppo_battle_tick)
-                    // Commented out the above to test the animation
-                    .with_system(idle_animation),
+                SystemSet::on_update(GameState::CardPicking).with_system(idle_animation),
             )
             .add_system_set(SystemSet::on_enter(GameState::Loading).with_system(setup_ui))
             .add_system_set(
@@ -47,6 +47,17 @@ impl PluginTrait for Plugin {
             )
             .add_system_set(
                 SystemSet::on_update(GameState::CardPicking).with_system(interact_with_card),
+            )
+            .add_system_set(
+                SystemSet::on_enter(GameState::OpponentCardPick).with_system(spawn_opponent_card),
+            )
+            .add_system_set(
+                SystemSet::on_update(GameState::Battle)
+                    .with_system(player_battle_tick)
+                    .with_system(oppo_battle_tick)
+                    .with_system(idle_animation)
+                    .with_system(bring_out_your_dead_player)
+                    .with_system(bring_out_your_dead_oppo),
             );
     }
 }
@@ -69,6 +80,53 @@ fn idle_animation(
 
 fn play_music(asset_server: Res<AssetServer>, audio: Res<Audio>) {
     audio.play_looped(asset_server.load("sounds/battle-theme-demo.ogg"));
+}
+
+// Spawn the opponent's card when we enter battle
+fn spawn_opponent_card(
+    mut commands: Commands,
+    cards: Res<AllCards>,
+    card_assets: Res<Assets<CardRep>>,
+    inplay_query: Query<&Hitpoints, (With<Opponents>, With<InPlay>)>,
+    asset_server: Res<AssetServer>,
+    mut texture_atlases: ResMut<Assets<TextureAtlas>>,
+    mut state: ResMut<State<GameState>>,
+) {
+    if inplay_query.is_empty() {
+        let cards_ref = &cards.0;
+        let handle = cards_ref.choose(&mut thread_rng()).unwrap();
+        let card = card_assets.get(handle).unwrap();
+        let texture_handle = asset_server.load(&card.sprites);
+
+        let texture_atlas = TextureAtlas::from_grid(
+            texture_handle,
+            Vec2::new(card.sprite_size_w, card.sprite_size_h),
+            card.sprite_cols,
+            card.sprite_rows,
+        );
+
+        let texture_atlas_handle = texture_atlases.add(texture_atlas);
+
+        commands
+            .spawn()
+            .insert_bundle((
+                Name(card.name.clone()),
+                Hitpoints(card.hp.clone()),
+                InPlay,
+                Opponents,
+            ))
+            .insert_bundle(SpriteSheetBundle {
+                texture_atlas: texture_atlas_handle,
+                transform: Transform {
+                    // TODO: Make coordinates relative to screen size
+                    translation: Vec3::new(-500.0, 0.0, 2.0),
+                    scale: Vec3::splat(6.0),
+                    ..Default::default()
+                },
+                ..Default::default()
+            });
+    }
+    state.set(GameState::Battle);
 }
 
 // This system is not implemented yet. Shoud deal cards to player.
@@ -123,6 +181,7 @@ fn interact_with_card(
     mut hand_query: Query<Entity, With<HandContainer>>,
     mut deck: ResMut<PlayerDeck>,
     audio: Res<Audio>,
+    mut state: ResMut<State<GameState>>,
 ) {
     for (card_entity, interaction, card) in inter_query.iter() {
         match *interaction {
@@ -155,7 +214,13 @@ fn interact_with_card(
 
                 commands
                     .spawn()
-                    .insert_bundle((Name(card.0.name.clone()), Hitpoints(3), InPlay, Players))
+                    .insert_bundle((
+                        Name(card.0.name.clone()),
+                        card.0.actions.first().unwrap().clone(),
+                        Hitpoints(card.0.hp),
+                        InPlay,
+                        Players,
+                    ))
                     .insert_bundle(SpriteSheetBundle {
                         texture_atlas: texture_atlas_handle,
                         transform: Transform {
@@ -194,6 +259,8 @@ fn interact_with_card(
                         }
                     }
                 }
+                // Move game into Battle state now that player has a card in play
+                state.set(GameState::OpponentCardPick).unwrap();
             }
             // No interaction
             _ => (),

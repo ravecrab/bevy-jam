@@ -5,7 +5,8 @@ use crate::{
         components::{InPlay, Opponents, Players},
         BattleTimer,
     },
-    cards::{Attack, Card, Hitpoints},
+    cards::{Action, Hitpoints},
+    state::GameState,
 };
 
 /// This system runs every one second and performs the player's current in-play unit's attack
@@ -16,14 +17,17 @@ use crate::{
 pub fn player_battle_tick(
     time: Res<Time>,
     mut timer: ResMut<BattleTimer>,
-    player_card: Query<&Attack, (With<Card>, With<Players>, With<InPlay>)>,
-    mut oppo_card: Query<&mut Hitpoints, (With<Card>, With<Opponents>, With<InPlay>)>,
+    player_card: Query<&Action, (With<Players>, With<InPlay>)>,
+    mut oppo_card: Query<&mut Hitpoints, (With<Opponents>, With<InPlay>)>,
 ) {
     if timer.0.tick(time.delta()).just_finished() {
         // TODO: Play attack animation
         let attack = player_card.single();
         let mut hp = oppo_card.single_mut();
-        hp.0 -= attack.0;
+        match attack {
+            Action::Attack(amount) => hp.0 -= amount,
+            Action::Burn(amount) => hp.0 -= amount,
+        }
     }
 }
 
@@ -33,3 +37,29 @@ pub fn player_battle_tick(
 ///       units are not alway attacking at the same time
 #[allow(dead_code)]
 pub fn oppo_battle_tick() {}
+
+pub fn bring_out_your_dead_player(
+    mut commands: Commands,
+    mut state: ResMut<State<GameState>>,
+    dead_query: Query<(Entity, &Hitpoints), (With<Players>, With<InPlay>)>,
+) {
+    for (e, hp) in dead_query.iter() {
+        if hp.0 <= 0 {
+            commands.entity(e).despawn();
+            state.set(GameState::CardPicking).unwrap();
+        }
+    }
+}
+
+pub fn bring_out_your_dead_oppo(
+    mut commands: Commands,
+    mut state: ResMut<State<GameState>>,
+    dead_query: Query<(Entity, &Hitpoints), (With<Opponents>, With<InPlay>)>,
+) {
+    for (e, hp) in dead_query.iter() {
+        if hp.0 <= 0 {
+            commands.entity(e).despawn();
+            state.set(GameState::OpponentCardPick).unwrap();
+        }
+    }
+}

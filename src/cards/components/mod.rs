@@ -13,7 +13,7 @@ pub struct Name(pub String);
 pub struct Speed(pub u32);
 
 #[derive(Component)]
-pub struct Hitpoints(pub u32);
+pub struct Hitpoints(pub i32);
 
 #[derive(Component)]
 pub struct Card(pub u32);
